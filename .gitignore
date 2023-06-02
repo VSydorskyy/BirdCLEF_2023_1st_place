@@ -1,0 +1,10 @@
+logdirs
+.vscode
+*.ipynb_checkpoints
+*__pycache__*
+*.egg-info
+data/birdclef*
+data/esc50
+data/soundscapes_nocall
+data/xeno_canto
+data/audio

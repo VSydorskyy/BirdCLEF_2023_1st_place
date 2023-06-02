@@ -1,0 +1,38 @@
+-f https://download.pytorch.org/whl/torch_stable.html
+
+albumentations==1.3.0
+audiomentations==0.28.0
+black==22.3.0
+catalyst==22.4
+colorednoise==2.1.0
+GitPython==3.1.30
+h5py==3.8.0
+hyperopt==0.2.7
+ipdb==0.13.9
+jedi==0.18.2
+jupyterlab==3.4.8
+librosa==0.8.0
+matplotlib==3.5.3
+nnAudio==0.3.2
+noisereduce==2.0.1
+numba==0.56.4
+numpy==1.21.6
+pandas==1.3.5
+pre-commit==2.15.0
+prompt-toolkit==3.0.36
+tensorboard==2.11.2
+# timm==0.6.12
+timm==0.8.21.dev0
+torch==1.13.0+cu116
+torchaudio==0.13.0+cu116
+torchvision==0.14.0
+ttach==0.0.3
+scikit_learn==1.0.2
+seaborn==0.12.2
+kaggle==1.5.13
+# speechbrain==0.5.11
+# Required for catalyst
+accelerate==0.15.0
+onnx==1.13.0
+onnxruntime==1.14.0
+onnxsim==0.4.0
