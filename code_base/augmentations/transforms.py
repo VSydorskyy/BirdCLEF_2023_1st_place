@@ -1,6 +1,7 @@
 import math
 from glob import glob
 from os.path import join as pjoin
+from warnings import warn
 
 import librosa
 import numpy as np
@@ -310,7 +311,11 @@ class BackgroundNoise(AudioTransform):
         return sample[start : start + crop_shape]
 
     def apply(self, y: np.ndarray, **params):
-        back_sample = self.samples[np.random.randint(len(self.samples))]
+        # TODO: It is a dirty hack BUT by some reasons we have corrupted samples
+        # In order not to use it make sure that all samples are Okey
+        back_sample = None
+        while back_sample is None:
+            back_sample = self.samples[np.random.randint(len(self.samples))]
 
         if y.shape[0] < back_sample.shape[0]:
             back_sample = self.crop_sample(back_sample, y.shape[0])

@@ -13,18 +13,16 @@ from code_base.train_functions import catalyst_training
 B_S = 64
 TRAIN_PERIOD = 5.0
 N_EPOCHS = 50
-ROOT_PATH = "/home/vova/data/exps/BirdCLEF_2023/birdclef_2023/train_audio/"
+ROOT_PATH = "data/birdclef_2023/train_audio"
 LATE_NORMALIZE = True
 
-PATH_TO_JSON_MAPPING = (
-    "/home/vova/data/exps/BirdCLEF_2023/final_pretrains/bird2id_v3.json"
-)
+PATH_TO_JSON_MAPPING = "data/bird2id_v3.json"
 PRECOMPUTE = True
 DEBUG = False
 
 CONFIG = {
     "seed": 1243,
-    "df_path": "/home/vova/data/exps/BirdCLEF_2023/birdclef_2023/train_metadata_extended.csv",
+    "df_path": "data/train_metadata_extended.csv",
     "split_path": None,
     "exp_name": f"eca_nfnet_l0_Exp_noamp_64bs_5sec_mixupP05_RandomFiltering_balancedSampler_lr1e3_CosineLREpoch50_ValV2_202xXcAddDataNoAddSecLabels_BackGroundSoundScapeP05_SpecAugV1_FocalLoss_DPR02_TuneV3_noval",
     "files_to_save": (
@@ -47,13 +45,14 @@ CONFIG = {
             "shuffle": True,
             "sampler_col": "primary_label",
             "add_df_paths": [
-                "/home/vova/data/exps/BirdCLEF_2023/train_metadata_extended_2020_2022_no2023_scored_nodupl_v1_only_prime_2023SecLabels.csv",
-                "/home/vova/data/exps/BirdCLEF_2023/xeno_canto/scored_2023_xc_2023SecLabels.csv",
+                "data/train_metadata_extended_2020_2022_no2023_scored_nodupl_v1_only_prime_2023SecLabels.csv",
+                "data/scored_2023_xc_2023SecLabels.csv",
             ],
+            "add_root": "data/audio",
             "late_aug": BackgroundNoise(
                 p=0.5,
-                esc50_root="",
-                esc50_df_path="/home/vova/data/exps/BirdCLEF_2023/soundscapes_processed/v1_no_call_meta.csv",
+                esc50_root="data/soundscapes_nocall/train_audio",
+                esc50_df_path="data/v1_no_call_meta.csv",
                 normalize=LATE_NORMALIZE,
             ),
         },
@@ -132,7 +131,7 @@ CONFIG = {
         "check": False,
         "use_amp": False,
         "label_str2int_path": PATH_TO_JSON_MAPPING,
-        "class_weights_path": "/home/vova/data/exps/BirdCLEF_2023/xc_birds_202x_only_scored_sample_weights_v1.json",
+        "class_weights_path": "data/xc_birds_202x_only_scored_sample_weights_v1_till_12_05_2023_v2.json",
         "use_sampler": True,
         "pretrained_chekpoints": "logdirs/eca_nfnet_l0_Exp_noamp_64bs_5sec_mixupP05_RandomFiltering_balancedSampler_lr1e3_CosineLREpoch50_202xXcAddDataNoAddSecLabelsMayXCV1_BackGroundSoundScapeORESC50P05_SpecAugV1_FocalLoss_noval_PretrainV3/checkpoints/model.last.pth",
         "checkpoint_type": "catalyst",

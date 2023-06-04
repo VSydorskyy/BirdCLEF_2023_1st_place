@@ -2,13 +2,13 @@
 Codebase for Bird Clef 2023
 
 ```bash
+# Export credentials
+ export KAGGLE_USERNAME={KAGGLE_USERNAME}
+ export KAGGLE_KEY={KAGGLE_KEY}
 # Create environment
 conda env create -f requirements/environment.yml
 conda activate bird_clef_2023_1st_place
 pip install -e .
-# Export credentials
- export KAGGLE_USERNAME={KAGGLE_USERNAME}
- export KAGGLE_KEY={KAGGLE_KEY}
 # Download data and prepare
 cd data
 kaggle competitions download -c birdclef-2023
@@ -63,22 +63,39 @@ unzip xeno_canto.zip
 rm xeno_canto.zip
 
 mv birdclef_2023_data_part1/audio/audio audio
-rm birdclef_2023_data_part1/audio -r
-mv birdclef_2023_data_part1/* ./
 
 mv birdclef_2023_data_part2/esc50/esc50 esc50
 
-mv birdclef_2023_data_part3/birdclef_2020/birdclef_2020 birdclef_2020
+mv birdclef_2023_data_part3/birdclef_2020/birdclef_2020 birdclef_2020_features
 
-mv birdclef_2023_data_part4/birdclef_2020_xc_a_m/birdclef_2020_xc_a_m birdclef_2020_xc_a_m
-mv birdclef_2023_data_part4/birdclef_2020_xc_n_z/birdclef_2020_xc_n_z birdclef_2020_xc_n_z
+mv birdclef_2023_data_part4/birdclef_2020_xc_a_m/birdclef_2020_xc_a_m birdclef_2020_xc_a_m_features
+mv birdclef_2023_data_part4/birdclef_2020_xc_n_z/birdclef_2020_xc_n_z birdclef_2020_xc_n_z_features
 
 mv birdclef_2023_data_part5/birdclef_2021 birdclef_2021
 
 mv birdclef_2023_data_part8/birdclef_2022 birdclef_2022
 
 rm birdclef_2023_data_part* -r
+
+cd ../
+# Transform some wave files in h5 for pretraining 
+python scripts/precompute_features.py data/birdclef_2021 data/birdclef_2021_features
+rm data/birdclef_2021 -rf
+python scripts/precompute_features.py data/birdclef_2022 data/birdclef_2022_features
+rm data/birdclef_2022 -rf
+python scripts/precompute_features.py data/xeno_canto data/xeno_canto_features
+rm data/xeno_canto -rf
+# Start training
+CUDA_VISIBLE_DEVICES="0" python scripts/main_train.py train_configs/convnext_small_fb_in22k_ft_in1k_384_pretrain.py --exception_handling
+CUDA_VISIBLE_DEVICES="0" python scripts/main_train.py train_configs/convnext_small_fb_in22k_ft_in1k_384_tune.py --exception_handling
+
+CUDA_VISIBLE_DEVICES="0" python scripts/main_train.py train_configs/eca_nfnet_l0_pretrain.py --exception_handling
+CUDA_VISIBLE_DEVICES="0" python scripts/main_train.py train_configs/eca_nfnet_l0_tune.py --exception_handling
+
+CUDA_VISIBLE_DEVICES="0" python scripts/main_train.py train_configs/convnextv2_tiny_fcmae_ft_in22k_in1k.py --exception_handling
 ```
+
+Find final model in `logdirs/convnext_small_fb_in22k_ft_in1k_384__convnextv2_tiny_fcmae_ft_in22k_in1k_384__eca_nfnet_l0_noval_v32_075Clipwise025TimeMax_GausMean/onnx_ensem/model_simpl.onnx`
 
 ## Setup Env
 

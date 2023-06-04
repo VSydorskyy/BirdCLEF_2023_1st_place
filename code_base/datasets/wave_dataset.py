@@ -26,6 +26,7 @@ class WaveDataset(torch.utils.data.Dataset):
         replace_pathes=None,
         df=None,
         add_df_paths=None,
+        add_root=None,
         target_col="primary_label",
         sec_target_col="secondary_labels",
         name_col="filename",
@@ -54,6 +55,8 @@ class WaveDataset(torch.utils.data.Dataset):
             raise ValueError("h5py files can not be used with `precompute`")
         if df is None and add_df_paths is None:
             raise ValueError("`df` OR/AND `add_df_paths` should be defined")
+        if df is not None:
+            df[f"{name_col}_with_root"] = None
         if add_df_paths is not None:
             cols_to_take = [
                 target_col,
@@ -74,6 +77,10 @@ class WaveDataset(torch.utils.data.Dataset):
                 [pd.read_csv(el)[cols_to_take] for el in add_df_paths],
                 axis=0,
             ).reset_index(drop=True)
+            if add_root is not None:
+                add_merged_df[f"{name_col}_with_root"] = add_merged_df[
+                    name_col
+                ].apply(lambda x: pjoin(add_root, x))
             df = pd.concat([df, add_merged_df], axis=0).reset_index(drop=True)
         if df_filter_rule is not None:
             df = df_filter_rule(df)
@@ -97,9 +104,10 @@ class WaveDataset(torch.utils.data.Dataset):
         if shuffle:
             self.df = self.df.sample(frac=1).reset_index(drop=True)
 
-        self.df[f"{name_col}_with_root"] = self.df[name_col].apply(
-            lambda x: pjoin(root, x)
-        )
+        mask_col = self.df[f"{name_col}_with_root"].isna()
+        self.df.loc[mask_col, f"{name_col}_with_root"] = self.df.loc[
+            mask_col, name_col
+        ].apply(lambda x: pjoin(root, x))
         if replace_pathes is not None:
             self.df[f"{name_col}_with_root"] = self.df[
                 f"{name_col}_with_root"

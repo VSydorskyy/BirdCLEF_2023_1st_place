@@ -16,16 +16,13 @@ N_EPOCHS = 50
 ROOT_PATH = ""
 LATE_NORMALIZE = True
 
-PATH_TO_JSON_MAPPING = (
-    "/home/vova/data/exps/BirdCLEF_2023/final_pretrains/bird2id_v3.json"
-)
-PRECOMPUTE = True
+PATH_TO_JSON_MAPPING = "data/bird2id_v3.json"
 DEBUG = False
 
 CONFIG = {
     "seed": 1243,
-    "df_path": "/home/vova/data/exps/BirdCLEF_2023/xeno_canto/train_metadata_extended_shorten_and_2023x_v3.csv",
-    "split_path": "/home/vova/data/exps/BirdCLEF_2023/xeno_canto/add_xeno_canto_old_pretrain_df_oof_split_v3.npy",
+    "df_path": "data/train_metadata_extended_shorten_and_2023x_v3.csv",
+    "split_path": "data/add_xeno_canto_old_pretrain_df_oof_split_v3.npy",
     "exp_name": f"convnext_small_fb_in22k_ft_in1k_384_Exp_noamp_64bs_5sec_mixupP05_RandomFiltering_balancedSampler_lr1e4_CosineLREpoch50_202xXcAddDataNoAddSecLabelsMayXCV1_BackGroundSoundScapeORESC50P05_SpecAugV1_FocalLoss_noval_PretrainV3",
     "files_to_save": (
         glob("code_base/**/*.py") + [__file__] + ["scripts/main_train.py"]
@@ -52,14 +49,14 @@ CONFIG = {
                 [
                     BackgroundNoise(
                         p=0.5,
-                        esc50_root="",
-                        esc50_df_path="/home/vova/data/exps/BirdCLEF_2023/soundscapes_processed/v1_no_call_meta.csv",
+                        esc50_root="data/soundscapes_nocall/train_audio",
+                        esc50_df_path="data/v1_no_call_meta.csv",
                         normalize=LATE_NORMALIZE,
                     ),
                     BackgroundNoise(
                         p=0.5,
-                        esc50_root="",
-                        esc50_df_path="/home/vova/data/exps/BirdCLEF_2023/environmental_sounds/esc50_background.csv",
+                        esc50_root="data/esc50/audio",
+                        esc50_df_path="data/esc50_background.csv",
                         esc50_cats_to_include=[
                             "dog",
                             "rain",
@@ -91,12 +88,14 @@ CONFIG = {
         "val_dataset_config": {
             "root": ROOT_PATH,
             "label_str2int_mapping_path": PATH_TO_JSON_MAPPING,
-            "precompute": True,
+            "precompute": False,
             "n_cores": 32,
             "debug": DEBUG,
             "segment_len": 5,
             "sample_id": None,
             "late_normalize": LATE_NORMALIZE,
+            "use_h5py": True,
+            "name_col": "filename_h5py",
         },
         "train_dataloader_config": {
             "batch_size": B_S,
@@ -173,7 +172,7 @@ CONFIG = {
                 output_key="clipwise_pred_long",
                 use_sigmoid=False,
                 label_str2int_mapping_path=PATH_TO_JSON_MAPPING,
-                scored_bird_path="/home/vova/data/exps/BirdCLEF_2023/xeno_canto/scored_birds_xc_pretrain_val_v3.json",
+                scored_bird_path="data/scored_birds_xc_pretrain_val_v3.json",
             ),
             callbacks.SchedulerCallback(
                 mode="epoch",
@@ -185,7 +184,7 @@ CONFIG = {
         "check": False,
         "use_amp": False,
         "label_str2int_path": PATH_TO_JSON_MAPPING,
-        "class_weights_path": "/home/vova/data/exps/BirdCLEF_2023/final_pretrains/sample_weights_v3.json",
+        "class_weights_path": "data/sample_weights_v3.json",
         "use_sampler": True,
     },
 }
