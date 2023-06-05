@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# Create environment
-conda env create -f requirements/environment.yml
-conda activate bird_clef_2023_1st_place
-pip install -e .
+echo "GPU $1 will be used for training"
+
 # Download data and prepare
 cd data
 kaggle competitions download -c birdclef-2023
@@ -88,3 +86,5 @@ CUDA_VISIBLE_DEVICES="$1" python scripts/main_train.py train_configs/eca_nfnet_l
 CUDA_VISIBLE_DEVICES="$1" python scripts/main_train.py train_configs/eca_nfnet_l0_tune.py --exception_handling
 
 CUDA_VISIBLE_DEVICES="$1" python scripts/main_train.py train_configs/convnextv2_tiny_fcmae_ft_in22k_in1k.py --exception_handling
+# Create final ensemble in ONNX format
+CUDA_VISIBLE_DEVICES="$1" python scripts/create_final_ensemble.py
